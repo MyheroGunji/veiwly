@@ -1,0 +1,346 @@
+/* =============================
+   Global Layout & Base Styles
+   ============================= */
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+}
+
+#shotdeck_logo img {
+  margin-left: 20px;
+  width: 200px;
+  height: 60px;
+}
+
+/* =============================
+   Search Section (検索フォーム部分)
+   ============================= */
+.search-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 60px 20px 30px;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.search-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  color: #111827;
+  animation: fadeIn 1s ease-in-out;
+}
+
+.search-form {
+  width: 100%;
+  max-width: 600px;
+  display: flex;
+  gap: 10px;
+  animation: slideUp 0.8s ease-in-out;
+}
+
+.search-input {
+  flex-grow: 1;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  box-shadow: none;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ec4899;
+  box-shadow: 0 0 8px rgba(236, 72, 153, 0.3);
+}
+
+.search-button {
+  padding: 0.5rem 1.5rem;
+  background-color: #ec4899;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s ease;
+}
+
+.search-button:hover {
+  background-color: #db2777;
+}
+
+/* =============================
+   Carousel Navigation (Top Picks)
+   ============================= */
+.scroll-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  font-size: 2rem;
+  padding: 0.5rem 1rem;
+  z-index: 10;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  border-radius: 10px;
+}
+
+.scroll-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.top-picks-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.top-picks-carousel {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* =============================
+   Search Results (映画 & TV) - Dark Theme
+   ============================= */
+
+/* 検索結果カード全体 */
+.movie-card {
+  background-color: #1e293b; /* 濃紺カード */
+  border: 1px solid #374151;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.movie-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: #ec4899; /* ピンクアクセント */
+  box-shadow: 0 8px 20px rgba(236, 72, 153, 0.4);
+}
+
+/* ポスター画像 */
+.card-img-top {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: contain;
+  background-color: #0f172a; /* 背景暗め */
+  padding: 6px;
+  transition: transform 0.3s ease;
+}
+
+.movie-card:hover .card-img-top {
+  transform: scale(1.02);
+}
+
+/* カード内テキスト */
+.card-body {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 0.9rem 1rem;
+  background-color: #1e293b;
+}
+
+.card-title {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  color: #f1f5f9; /* 白文字 */
+}
+
+.card-text {
+  font-size: 0.85rem;
+  color: #cbd5e1; /* 薄いグレー */
+  margin-bottom: 0.5rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+/* 評価スター */
+.rating-stars {
+  font-size: 1.2rem;
+  display: inline-block;
+  position: relative;
+  line-height: 1;
+  letter-spacing: 2px;
+  color: #facc15; /* ゴールド */
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Watchlist & Reviewボタン */
+.btn-watchlist {
+  background: linear-gradient(to right, #ec4899, #8b5cf6);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 1.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-watchlist:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.4);
+}
+
+.btn-review {
+  background-color: transparent;
+  color: #f1f5f9;
+  border: 1px solid #8b5cf6;
+  border-radius: 1.25rem;
+  transition: background-color 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-review:hover {
+  background-color: #8b5cf6;
+  border-color: #8b5cf6;
+  transform: translateY(-2px);
+  color: white;
+}
+
+.btn-review i,
+.btn-watchlist i {
+  margin-right: 6px;
+}
+
+/* 検索結果の見出し */
+.results-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 40px 0 20px;
+  animation: fadeIn 0.8s ease-in-out;
+  color: #0f172a; /* 白文字に */
+}
+
+/* =============================
+   Rating Stars (Custom Movie App Theme)
+   ============================= */
+.rating-stars {
+  font-size: 1.3rem; /* 少し大きめで見やすく */
+  display: inline-flex;
+  align-items: center;
+  line-height: 1;
+  letter-spacing: 2px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* 星の基本 */
+.rating-stars .star {
+  display: inline-block;
+  width: 1.1em;
+  height: 1.1em;
+  margin-right: 2px;
+  background: url("/images/star-empty.svg") no-repeat center;
+  background-size: contain;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+/* 満タンの星 */
+.rating-stars .star.full {
+  background-image: url("/images/star-full.svg");
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.7)); /* ゴールドの光 */
+}
+
+/* 半分の星 */
+.rating-stars .star.half {
+  background-image: url("/images/star-half-stroke.svg");
+  filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.5));
+}
+
+/* ホバー時のアニメーション（クリックはしないけど視覚的効果） */
+.rating-stars .star:hover {
+  transform: scale(1.15);
+  filter: drop-shadow(0 0 6px rgba(255, 215, 0, 0.9));
+}
+
+
+/* Watchlist & Reviewボタン */
+.btn-watchlist {
+  background: linear-gradient(to right, #ec4899, #8b5cf6);
+  color: #fff;
+  font-weight: bold;
+  border: none;
+  border-radius: 1.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-watchlist:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(236, 72, 153, 0.3);
+}
+
+.btn-review {
+  background-color: #f3f4f6;
+  color: #4b5563;
+  border: 1px solid #d1d5db;
+  border-radius: 1.25rem;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-review:hover {
+  background-color: #e5e7eb;
+  transform: translateY(-2px);
+}
+
+.btn-review i,
+.btn-watchlist i {
+  margin-right: 6px;
+}
+
+/* 検索結果の見出し */
+.results-title {
+  font-size: 1.8rem;
+  font-weight: 500;
+  margin: 30px 0 10px;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+/* =============================
+   Animation Effects
+   ============================= */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.8); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* =============================
+   Responsive Adjustments
+   ============================= */
+@media (max-width: 768px) {
+  .card-img-top {
+    max-height: 220px;
+  }
+  .card-title {
+    font-size: 0.95rem;
+  }
+  .card-text {
+    -webkit-line-clamp: 3;
+  }
+}
+
+@media (max-width: 576px) {
+  .card-img-top {
+    max-height: 180px;
+  }
+  .card-body {
+    padding: 0.5rem;
+  }
+}

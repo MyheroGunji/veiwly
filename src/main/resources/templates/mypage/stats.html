@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Statistics</title>
+    <!-- ヘッダー -->
+    <th:block th:replace="fragments/header :: head"></th:block>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d0d0d, #3a3a3a);
+            color: #ffffff;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* ★ メイン全体の中央寄せ＆幅制限 */
+        .main-content {
+            max-width: 960px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ★ 統計カード */
+        .stat-card {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            color: #fff;
+            transition: transform 0.2s;
+            height: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            color: #4FD1C5;
+        }
+
+        .stat-card p {
+            font-size: 1rem;
+            color: #ccc;
+        }
+
+        /* ★ 各グラフセクション */
+        .stat-section {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            max-width: 100%;
+        }
+
+        /* セクションタイトル */
+        .stat-section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #f0f0f0;
+        }
+
+        /* グラフの最大幅制限 */
+        canvas {
+            display: block;
+            margin: 0 auto;
+            width: 100% !important;
+            max-width: 720px;
+            height: auto !important;
+        }
+
+        /* パンくず */
+        .breadcrumb {
+            background: transparent;
+            margin-bottom: 1rem;
+            padding: 0;
+        }
+
+        .breadcrumb a {
+            color: #ccc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .breadcrumb a:hover {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '›';
+            color: #bbb;
+            padding: 0 0.5rem;
+        }
+
+        .breadcrumb-item.active {
+            color: #fff;
+            font-weight: bold;
+        }
+
+</style>
+</head>
+
+<body>
+<th:block th:replace="fragments/header :: navbar"/>
+
+<div class="main-content container">
+
+    <!-- パンくずリスト -->
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/mypage}">My Page</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Statistics</li>
+            </ol>
+        </nav>
+    </div>
+
+    <h1>Viewing Statistics</h1>
+
+    <!-- 統計カード -->
+    <div class="row mb-5 text-center">
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <h3 th:text="${totalReviews}">0</h3>
+                <p>Total Reviews</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <h3 th:text="${totalWatchTime}">0</h3>
+                <p>Total Minutes</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <h3 th:text="${#numbers.formatDecimal(averageRating, 1, 1)}">0.0</h3>
+                <p>Avg. Rating</p>
+            </div>
+        </div>
+        <div class="col-md-3 mb-3">
+            <div class="stat-card">
+                <h3 th:text="${favoriteGenre}">-</h3>
+                <p>Favorite Genre</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ジャンルごとの視聴数 -->
+    <div class="stat-section">
+        <h2>Number of Movies per Genre</h2>
+        <canvas id="genreBarChart"></canvas>
+    </div>
+
+    <!-- ジャンルごとの平均評価 -->
+    <div class="stat-section">
+        <h2>Average Ratings by Genre</h2>
+        <canvas id="genreRadarChart"></canvas>
+    </div>
+
+    <!-- 月別レビュー数 -->
+    <div class="stat-section">
+        <h2>Monthly Review Count</h2>
+        <canvas id="monthlyReviewChart"></canvas>
+    </div>
+
+    <!-- 月別視聴時間 -->
+    <div class="stat-section">
+        <h2>Monthly Watch Time (min)</h2>
+        <canvas id="monthlyTimeChart"></canvas>
+    </div>
+
+    <!-- Movie vs TV -->
+    <div class="stat-section">
+        <h2>Movie vs TV Ratio</h2>
+        <canvas id="typePieChart"></canvas>
+    </div>
+
+
+</div>
+
+<script th:inline="javascript">
+    const genreLabels = /*[[${genreLabels}]]*/ [];
+    const genreData = /*[[${genreData}]]*/ [];
+    const genreAvgRatings = /*[[${genreAverageRatings}]]*/ [];
+
+    const monthLabels = /*[[${monthLabels}]]*/ [];
+    const monthlyCounts = /*[[${monthlyCounts}]]*/ [];
+    const monthlyTimes = /*[[${monthlyTimes}]]*/ [];
+
+    const rawTypeLabels = /*[[${typeLabels}]]*/ [];
+    const typeData = /*[[${typeData}]]*/ [];
+
+    // === Movie / TV のラベル整形 + 集計して重複排除 ===
+    const mergedTypeData = {};
+    rawTypeLabels.forEach((label, index) => {
+        const normalized = (label || '').toLowerCase();
+        let displayLabel = 'Unknown';
+        if (normalized === 'movie') displayLabel = 'Movie';
+        else if (normalized === 'tv') displayLabel = 'TV';
+
+        if (mergedTypeData[displayLabel]) {
+            mergedTypeData[displayLabel] += typeData[index];
+        } else {
+            mergedTypeData[displayLabel] = typeData[index];
+        }
+    });
+
+    // Chart.js 用に整形（ラベル、データ、色）
+    const typeLabels = Object.keys(mergedTypeData);
+    const typeDataCleaned = Object.values(mergedTypeData);
+
+    const typeColors = {
+        "Movie": 'rgba(153, 102, 255, 0.7)',
+        "TV": 'rgba(255, 206, 86, 0.7)',
+        "Unknown": 'rgba(201, 203, 207, 0.7)'
+    };
+    const backgroundColors = typeLabels.map(label => typeColors[label] || 'rgba(200,200,200,0.5)');
+
+    // === グラフ描画（省略せず全て出力） ===
+
+    // 1. ジャンルごとの視聴数（棒グラフ）
+    new Chart(document.getElementById('genreBarChart'), {
+        type: 'bar',
+        data: {
+            labels: genreLabels,
+            datasets: [{
+                label: 'Number of Movies',
+                data: genreData,
+                backgroundColor: 'rgba(75, 192, 192, 0.7)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1,
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                x: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
+                y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            }
+        }
+    });
+
+    // 2. ジャンルごとの平均評価（レーダーチャート）
+    new Chart(document.getElementById('genreRadarChart'), {
+        type: 'radar',
+        data: {
+            labels: genreLabels,
+            datasets: [{
+                label: 'Average Rating',
+                data: genreAvgRatings,
+                fill: true,
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                pointBackgroundColor: 'rgba(255, 99, 132, 1)'
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                r: {
+                    angleLines: { color: 'rgba(255,255,255,0.2)' },
+                    grid: { color: 'rgba(255,255,255,0.2)' },
+                    pointLabels: { color: '#fff' },
+                    ticks: {
+                        color: '#fff',
+                        beginAtZero: true,
+                        max: 10,
+                        stepSize: 1
+                    }
+                }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+
+    // 3. 月別レビュー数（折れ線）
+    new Chart(document.getElementById('monthlyReviewChart'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                label: 'Reviews per Month',
+                data: monthlyCounts,
+                fill: false,
+                borderColor: 'rgba(54, 162, 235, 1)',
+                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { ticks: { color: '#fff' } },
+                y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+
+    // 4. 月別視聴時間（折れ線）
+    new Chart(document.getElementById('monthlyTimeChart'), {
+        type: 'line',
+        data: {
+            labels: monthLabels,
+            datasets: [{
+                label: 'Watch Time (min)',
+                data: monthlyTimes,
+                fill: false,
+                borderColor: 'rgba(255, 159, 64, 1)',
+                backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                tension: 0.3
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: { ticks: { color: '#fff' } },
+                y: { beginAtZero: true, ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
+            },
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+
+    // 5. Movie vs TV (ドーナツチャート)
+    new Chart(document.getElementById('typePieChart'), {
+        type: 'doughnut',
+        data: {
+            labels: typeLabels,
+            datasets: [{
+                label: 'Movie / TV Ratio',
+                data: typeData,
+                backgroundColor: backgroundColors,
+                borderColor: '#fff',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { labels: { color: '#fff' } }
+            }
+        }
+    });
+</script>
+
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+</body>
+</html>

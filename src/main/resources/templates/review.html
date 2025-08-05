@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="fragments/header :: head"></th:block>
+  <style>
+    body {
+      background: linear-gradient(to right, #f9fafb, #e0f2f1);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .review-card {
+      background: white;
+      border-radius: 2rem;
+      box-shadow: 0 12px 24px rgba(0,0,0,0.1);
+      padding: 2rem;
+      margin-top: 2rem;
+      transition: transform 0.2s;
+    }
+    .review-card:hover {
+      transform: scale(1.01);
+    }
+    h2 {
+      font-weight: bold;
+      background: -webkit-linear-gradient(45deg, #8b5cf6, #ec4899);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    label {
+      font-weight: 600;
+    }
+    .btn-submit {
+      background: linear-gradient(to right, #8b5cf6, #ec4899);
+      border: none;
+      color: white;
+      padding: 0.6rem 1.2rem;
+      border-radius: 1.5rem;
+      font-weight: bold;
+      transition: all 0.3s ease-in-out;
+    }
+    .btn-submit:hover {
+      background: linear-gradient(to right, #a78bfa, #f472b6);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+
+<th:block th:replace="fragments/header :: navbar"></th:block>
+
+<div class="container">
+  <div class="review-card">
+    <h2 class="text-center mb-4">Write Your Review</h2>
+
+    <form th:action="@{/review/save}" th:object="${review}" method="post">
+      <input type="hidden" th:field="*{title}" />
+      <input type="hidden" th:field="*{posterPath}" />
+      <input type="hidden" th:field="*{type}" />
+
+      <div class="mb-3">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" th:field="*{title}" readonly />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Your Thoughts 💬</label>
+        <textarea class="form-control" rows="5" th:field="*{content}" placeholder="Tell us what you loved (or didn’t)..." required></textarea>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Rating (1.0 - 10.0)</label>
+        <input type="number" step="0.1" min="1.0" max="10.0" th:field="*{rating}" class="form-control" required>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Genre</label>
+          <input type="text" th:field="*{genre}" class="form-control" readonly />
+        </div>
+
+        <div class="col-md-6 mb-3">
+          <label class="form-label">Duration (min)</label>
+          <input type="number" th:field="*{duration}" class="form-control" readonly />
+        </div>
+      </div>
+
+      <div class="text-center">
+        <button type="submit" class="btn btn-submit">
+          <i class="bi bi-send-fill"></i> Submit Review
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+</body>
+</html>

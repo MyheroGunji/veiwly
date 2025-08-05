@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Watchlist</title>
+    <meta charset="UTF-8"/>
+</head>
+<body>
+<h2>My Watchlist</h2>
+<div th:if="${watchlist.isEmpty()}">
+    <p>No items in your watchlist.</p>
+</div>
+<div th:unless="${watchlist.isEmpty()}">
+    <ul>
+        <li th:each="item : ${watchlist}">
+            <img th:src="@{${item.posterPath}}" alt="Poster" style="height: 100px;"/>
+            <div>
+                <h3 th:text="${item.title}">Title</h3>
+                <p><strong>Rating:</strong> <span th:text="${item.voteAverage}"></span></p>
+            </div>
+        </li>
+    </ul>
+</div>
+</body>
+</html>

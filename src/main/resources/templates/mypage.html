@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <th:block th:replace="fragments/header :: head"></th:block>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0d0d0d, #3a3a3a);
+            color: #f1f1f1;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            padding-bottom: 80px;
+        }
+        footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .mypage-container {
+            margin-top: 4rem;
+            max-width: 700px;
+            padding: 0 1rem;
+        }
+
+        h2 {
+            font-weight: 700;
+            font-size: 2.2rem;
+            text-align: center;
+            background: linear-gradient(90deg, #ec4899, #8b5cf6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2.5rem;
+        }
+
+        .list-group-item {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1.25rem;
+            margin-bottom: 1.2rem;
+            padding: 1rem 1.2rem;
+            color: #fff;
+            font-weight: 500;
+            font-size: 1.05rem;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        }
+
+        .list-group-item:hover {
+            background: linear-gradient(to right, #ec4899, #8b5cf6);
+            color: #fff;
+            transform: translateY(-2px);
+        }
+
+        .list-group-item i {
+            font-size: 1.4rem;
+            margin-right: 0.8rem;
+        }
+
+        .list-group-item span {
+            flex-grow: 1;
+            font-size: 1.05rem;
+        }
+
+        .list-group-item .bi-chevron-right {
+            transition: transform 0.2s ease;
+        }
+
+        .list-group-item:hover .bi-chevron-right {
+            transform: translateX(5px);
+        }
+
+        @media (max-width: 576px) {
+            .list-group-item {
+                flex-direction: row;
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+            }
+            .list-group-item i {
+                font-size: 1.2rem;
+                margin-right: 0.6rem;
+            }
+            .list-group-item span {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<th:block th:replace="fragments/header :: navbar"></th:block>
+
+<div class="container mypage-container">
+    <h2>My Page</h2>
+
+    <div class="list-group">
+        <a th:href="@{/mypage/reviews}" class="list-group-item">
+            <i class="bi bi-pencil-square"></i>
+            <span>Reviews</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <a th:href="@{/mypage/watchlist}" class="list-group-item">
+            <i class="bi bi-bookmark-plus"></i>
+            <span>Watchlist</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <a th:href="@{/mypage/stats}" class="list-group-item">
+            <i class="bi bi-bar-chart"></i>
+            <span>Statistics</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
+        <a th:href="@{/mypage/badges}" class="list-group-item">
+            <i class="bi bi-award"></i>
+            <span>View Badges</span>
+            <i class="bi bi-chevron-right"></i>
+        </a>
+    </div>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+</body>
+</html>
+

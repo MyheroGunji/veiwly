@@ -1,0 +1,86 @@
+<div th:fragment="results">
+  <div class="search-results-wrapper">
+    <div class="container search-results-container" th:if="${movies != null}">
+      <h2 class="results-title">Search Results</h2>
+
+      <div class="row">
+        <div class="col-md-4 mb-3" th:each="movie : ${movies}">
+          <div class="movie-card">
+            <!-- ポスター -->
+            <img th:src="${movie.posterPath}" class="card-img-top"
+                 alt="Poster" onerror="this.onerror=null;this.src='/images/no-poster.jpg';">
+
+            <!-- カード本文 -->
+            <div class="card-body">
+              <!-- タイトル -->
+              <h5 class="card-title" th:text="${movie.title}"></h5>
+
+              <!-- あらすじ -->
+              <p class="card-text" th:text="${movie.overview}"></p>
+
+              <!-- 公開日 -->
+              <p class="card-text mb-1 text-muted">
+                <small th:text="'Release: ' + ${movie.releaseDate}"></small>
+              </p>
+
+              <!-- 評価 -->
+              <div class="d-flex align-items-center gap-2 mt-2">
+                <div class="rating-stars" th:attr="data-rating=${movie.voteAverage}"></div>
+                <small class="text-muted" th:text="'(' + ${movie.voteAverage} + '/10)'"></small>
+              </div>
+
+              <!-- ボタン -->
+              <div class="d-flex mt-3 gap-2">
+                <!-- Watchlist追加 -->
+                <form th:action="@{/watchlist/add}" method="post" class="flex-fill">
+                  <input type="hidden" th:name="title" th:value="${movie.title}" />
+                  <input type="hidden" th:name="posterPath" th:value="${movie.posterPath}" />
+                  <input type="hidden" th:name="overview" th:value="${movie.overview}" />
+                  <input type="hidden" th:name="releaseDate" th:value="${movie.releaseDate}" />
+                  <input type="hidden" th:name="voteAverage" th:value="${movie.voteAverage}" />
+                  <button class="btn btn-watchlist btn-sm w-100" type="submit">
+                    <i class="bi bi-file-plus-fill"></i> Add to Watchlist
+                  </button>
+                </form>
+
+                <!-- Review作成 -->
+                <a th:href="@{/review/write(
+                                  title=${movie.title},
+                                  posterPath=${movie.posterPath},
+                                  tmdbId=${movie.id},
+                                  type=${type}
+                              )}" class="flex-fill">
+                  <button class="btn btn-review btn-sm w-100" type="button">
+                    <i class="bi bi-pencil-square"></i> Review
+                  </button>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 星評価描画スクリプト（映画・TV共通） -->
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".rating-stars").forEach(starsContainer => {
+            const rating = parseFloat(starsContainer.getAttribute("data-rating")) || 0;
+            const starsCount = rating / 2; // 10点満点 → 5点満点換算
+            let html = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= Math.floor(starsCount)) {
+                    html += '<span class="star full"></span>';
+                } else if (i - 0.5 === starsCount) {
+                    html += '<span class="star half"></span>';
+                } else {
+                    html += '<span class="star"></span>';
+                }
+            }
+            starsContainer.innerHTML = html;
+        });
+    });
+  </script>
+</div>

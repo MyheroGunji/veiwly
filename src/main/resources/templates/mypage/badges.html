@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>My Badge</title>
+  <th:block th:replace="fragments/header :: head"></th:block>
+    <style>
+      body {
+          background: linear-gradient(135deg, #111827, #1f2937);
+          color: #f3f4f6;
+          font-family: 'Segoe UI', sans-serif;
+      }
+
+      /* メインコンテンツ中央寄せ＆最大幅制限 */
+      .main-content {
+          flex: 1;
+          display: block;
+          justify-content: center;
+          max-width: 960px; /* 横幅制限 */
+          margin: 0 auto;   /* 中央寄せ */
+          padding: 2rem 1rem;
+      }
+
+      h1 {
+          text-align: center;
+          font-size: 2.5rem;
+          font-weight: bold;
+          margin-bottom: 2rem;
+          color: #f9fafb;
+      }
+
+      /* グリッドレイアウト（レスポンシブ対応） */
+      .badge-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* 最小200pxで自動調整 */
+          gap: 20px;
+          justify-items: center;
+          width: 100%;
+      }
+
+      /* カードデザイン */
+      .badge-card {
+          background: rgba(255, 255, 255, 0.05);
+          border-radius: 1rem;
+          padding: 1.5rem;
+          box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+          transition: transform 0.2s;
+          text-align: center;
+          width: 100%;
+          max-width: 250px;
+          border: 1px solid gold;
+      }
+
+      .badge-card:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+      }
+
+      /* バッジ名・説明 */
+      .badge-name {
+          font-size: 1.3rem;
+          font-weight: 700;
+          color: #93c5fd;
+          margin-bottom: 0.5rem;
+      }
+
+      .badge-desc {
+          font-size: 0.95rem;
+          color: #e5e7eb;
+      }
+
+      /* パンくずリスト */
+      .breadcrumb a {
+          color: #ddd;
+          font-weight: 500;
+      }
+
+      .breadcrumb-item + .breadcrumb-item::before {
+          content: '›';
+          color: #ddd;
+          padding: 0 0.5rem;
+      }
+
+      .breadcrumb-item.active {
+          color: #fff;
+      }
+
+      /* 獲得・未獲得の見た目 */
+      .badge-card.locked {
+          opacity: 0.4;
+          filter: grayscale(100%);
+      }
+
+      .badge-card.earned:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 12px 24px rgba(250, 204, 21, 0.3); /* Yellow glow */
+      }
+
+      .locked-text {
+          color: #d1d5db;
+          font-style: italic;
+      }
+
+      /* 小さい画面用の調整 */
+      @media (max-width: 768px) {
+          .badge-grid {
+              grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+          }
+      }
+
+    </style>
+  </head>
+  <body>
+  <th:block th:replace="fragments/header :: navbar"/>
+
+  <div class="main-content">
+    <!-- パンくずリスト -->
+    <div class="container mt-4">
+      <nav aria-label="breadcrumb">
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a th:href="@{/mypage}">My Page</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Badges</li>
+          </ol>
+      </nav>
+    </div>
+
+    <h1>Your Badges</h1>
+
+    <div th:if="${!hasEarnedBadges}" class="text-center text-muted">
+      <p>You haven't earned any badges yet... Start writing reviews!</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(badgeList)}" class="badge-grid">
+      <div class="badge-card" th:each="entry : ${badgeList}"
+           th:classappend="${entry.earned} ? ' earned' : ' locked'">
+
+        <!-- バッジアイコン表示 -->
+        <div th:switch="${entry.badge.name()}">
+          <i th:case="'FIRST_REVIEW'" class="bi bi-pencil-square"></i>
+          <i th:case="'ASPIRING_CRITIC'" class="bi bi-chat-left-quote"></i>
+          <i th:case="'LONG_WATCH_MASTER'" class="bi bi-hourglass-split"></i>
+          <i th:case="'GENRE_COLLECTOR'" class="bi bi-collection-play"></i>
+          <i th:case="'TV_JUNKIE'" class="bi bi-tv"></i>
+          <i th:case="'MOVIE_MANIAC'" class="bi bi-film"></i>
+          <i th:case="*" class="bi bi-award"></i>
+        </div>
+
+        <div class="badge-name" th:text="${entry.badge.displayName}">Badge Name</div>
+        <div class="badge-desc" th:text="${entry.badge.name()}">Badge Description</div>
+
+        <div class="badge-desc" th:text="${entry.earned} ? badge.description : 'Locked'"
+             th:classappend="${entry.earned} ? '' : 'locked-text'">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <th:block th:replace="fragments/footer :: footer"></th:block>
+  </body>
+  </html>

@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register - MovieApp</title>
+    <th:block th:replace="fragments/header :: head"/>
+
+    <style>
+        body {
+            background: linear-gradient(to right, #141e30, #243b55);
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.07);
+            border: none;
+            backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+            color: #fff;
+        }
+
+        .card-header {
+            background: transparent;
+            border-bottom: none;
+        }
+
+        .card-header h4,
+        .card-footer span,
+        .form-label {
+            color: #fff;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .form-control:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #ec4899;
+            box-shadow: 0 0 0 0.2rem rgba(236, 72, 153, 0.25);
+        }
+
+        .form-control::placeholder {
+            color: #ccc;
+        }
+
+        .btn-primary {
+            background-color: #ec4899;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #ff88b3;
+        }
+
+        a {
+            color: #ffb3c6;
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #ffc9d4;
+            text-decoration: underline;
+        }
+
+        .breadcrumb a {
+            color: #ddd;
+        }
+
+        .breadcrumb-item + .breadcrumb-item::before {
+            content: '›'; /* 矢印のアイコン統一 */
+            color: #ddd;
+            padding: 0 0.5rem;
+        }
+
+        .breadcrumb-item.active {
+            color: #fff;
+        }
+
+        .card-footer {
+            background: transparent;
+            border-top: none;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ナビゲーションバー -->
+<th:block th:replace="fragments/header :: navbar"/>
+
+<div class="main-content">
+    <!-- パンくずリスト -->
+    <div class="container mt-4">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a th:href="@{/}">Home</a></li>
+                <li class="breadcrumb-item"><a th:href="@{/login}">Sign in</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Create Account</li>
+            </ol>
+        </nav>
+    </div>
+
+    <!-- 登録フォーム -->
+    <div class="container my-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6 col-lg-5">
+                <div class="card shadow p-4">
+                    <div class="card-header text-center">
+                        <h4 class="fw-bold mb-0" style="font-size: 1.8rem;">Create Account</h4>
+                    </div>
+                    <div class="card-body">
+                        <form th:action="@{/register}" method="post">
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Username</label>
+                                <input type="text" name="username" id="username" class="form-control" required placeholder="Enter your username"/>
+                            </div>
+                            <div class="mb-3">
+                                <label for="password" class="form-label">Password</label>
+                                <input type="password" name="password" id="password" class="form-control" required placeholder="Enter your password"/>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Create Account</button>
+                        </form>
+                    </div>
+                    <div class="card-footer text-center">
+                        <span>Already have an account? </span><a th:href="@{/login}" class="small">Sign in</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- フッター -->
+<th:block th:replace="fragments/footer :: footer"/>
+
+</body>
+</html>

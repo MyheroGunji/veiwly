@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <th:block th:replace="fragments/header :: head"></th:block>
+  <style>
+    body {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #f1f5f9;
+      font-family: 'Segoe UI', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .saved-container {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 2rem;
+    }
+
+    .saved-icon {
+      font-size: 4rem;
+      color: #ec4899;
+      margin-bottom: 1rem;
+      animation: pop 0.4s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.7); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    h2 {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 1.5rem;
+    }
+
+    .btn-pink {
+      background-color: #ec4899;
+      border: none;
+      color: white;
+      font-weight: 600;
+      padding: 0.6rem 1.4rem;
+      border-radius: 8px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-pink:hover {
+      background-color: #f472b6;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+
+<th:block th:replace="fragments/header :: navbar"></th:block>
+
+<div class="saved-container">
+  <div class="saved-icon">
+    <i class="bi bi-check-circle-fill"></i>
+  </div>
+  <h2 th:text="${message}">Saved!</h2>
+  <a href="/mypage" class="btn-pink">Back to My Page</a>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:replace="fragments/header :: head"></th:block>
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<!-- ナビゲーション -->
+<th:block th:replace="fragments/header :: navbar"></th:block>
+
+<!-- 検索フォーム -->
+<section class="search-section">
+    <h1 class="search-title">Search for your favorite movie</h1>
+    <form th:action="@{/movies/search}" method="get" class="search-form">
+        <input type="text" name="query" class="search-input" placeholder="Enter movie title" required>
+        <button class="search-button" type="submit">Search</button>
+    </form>
+</section>
+
+<!-- Top Picks -->
+<section class="top-picks-section py-5" style="background: linear-gradient(135deg, #0d0d0d, #3a3a3a);">
+    <div class="container position-relative">
+        <h2 class="mb-4 fw-bold text-white">Top Picks For You</h2>
+
+        <button class="scroll-btn scroll-left position-absolute top-50 translate-middle-y" style="left: -50px;">
+            &#10094;
+        </button>
+        <button class="scroll-btn scroll-right position-absolute top-50 translate-middle-y" style="right: -30px;">
+            &#10095;
+        </button>
+
+        <div class="top-picks-carousel d-flex overflow-auto flex-nowrap px-2" style="scroll-behavior: smooth;">
+            <div class="movie-card-wrapper me-3" th:each="movie : ${popularMovies}" style="min-width: 250px; max-width: 280px; flex: 0 0 auto;">
+                <div class="card h-100 shadow-sm border-0 rounded-4 movie-card">
+                    <img th:src="${movie.posterPath}" class="card-img-top rounded-top-4"
+                         alt="Poster" style="width: 100%; height: auto; object-fit: cover;"
+                         onerror="this.onerror=null;this.src='/images/no-poster.jpg';">
+
+                    <div class="card-body bg-white rounded-bottom-4">
+                        <h5 class="card-title mb-2 fw-bold text-dark" th:text="${movie.title}"></h5>
+                        <p class="card-text mb-1 text-muted">
+                            <small th:text="'Release: ' + ${movie.releaseDate}"></small>
+                        </p>
+                        <div class="d-flex align-items-center gap-2 mt-2">
+                            <div class="rating-stars" th:attr="data-rating=${movie.voteAverage}"></div>
+                            <small class="text-muted fs-6 fw-bold" th:text="${#numbers.formatDecimal(movie.voteAverage, 1, 1)}"></small>
+                        </div>
+                        <div class="d-flex mt-3" style="gap: 8px;">
+                            <form th:action="@{/watchlist/add}" method="post" class="flex-fill">
+                                <input type="hidden" th:name="title" th:value="${movie.title}" />
+                                <input type="hidden" th:name="posterPath" th:value="${movie.posterPath}" />
+                                <input type="hidden" th:name="overview" th:value="${movie.overview}" />
+                                <input type="hidden" th:name="releaseDate" th:value="${movie.releaseDate}" />
+                                <input type="hidden" th:name="voteAverage" th:value="${movie.voteAverage}" />
+                                <button class="btn btn-outline-light btn-sm w-100" type="submit"
+                                        style="border-radius: 20px; background: linear-gradient(to right, #ec4899, #8b5cf6); color: white; font-weight: bold;">
+                                    <i class="bi bi-file-plus-fill"></i> Watchlist
+                                </button>
+                            </form>
+
+                            <a th:href="@{/review/write(
+                                title=${movie.title},
+                                posterPath=${movie.posterPath},
+                                tmdbId=${movie.id},
+                                type='movie'
+                            )}" class="flex-fill">
+                                <button class="btn btn-outline-secondary btn-sm w-100" type="button" style="border-radius: 20px;">
+                                    <i class="bi bi-pencil-square"></i> Review
+                                </button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Search Results 読み込み -->
+<th:block th:replace="fragments/search-results :: results"></th:block>
+
+<!-- スクリプト -->
+<script src="/js/carousel.js"></script>
+
+<!-- フッター -->
+<th:block th:replace="fragments/footer :: footer"></th:block>
+
+</body>
+</html>

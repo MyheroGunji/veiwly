@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <th:block th:replace="fragments/header :: head"/>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            background: #0f172a;
+            color: #f1f5f9;
+        }
+
+        .review-card {
+            background: #1e293b;
+            border-radius: 0.75rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 15px 30px rgba(236, 72, 153, 0.3);
+        }
+
+        .review-date {
+            color: #94a3b8;
+        }
+
+        .review-content {
+            color: #e2e8f0;
+        }
+
+        .btn-outline-primary {
+            color: #8b5cf6;
+            border-color: #8b5cf6;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #8b5cf6;
+            color: white;
+        }
+
+        .btn-outline-danger {
+            color: #f43f5e;
+            border-color: #f43f5e;
+        }
+
+        .btn-outline-danger:hover {
+            background-color: #f43f5e;
+            color: white;
+        }
+
+        /* Breadcrumb - unified style with icon */
+        .breadcrumb {
+            background: transparent;
+            padding: 0;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .breadcrumb-item a,
+        .breadcrumb-item.active {
+            color: #ffffff !important;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb-item a:hover {
+            color: #f472b6;
+            text-decoration: underline;
+        }
+
+        .breadcrumb-separator {
+            display: flex;
+            align-items: center;
+            color: #ffffff;
+            font-size: 0.9rem; /* 細めの印象に */
+        }
+
+
+        .rating-stars {
+            font-size: 1.3rem;
+            color: #fbbf24;
+            display: inline-block;
+            line-height: 1;
+            letter-spacing: 2px;
+        }
+
+        .rating-stars .star {
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            margin-right: 2px;
+        }
+
+        .rating-stars .star::before {
+            content: "\f005";
+            color: #475569;
+        }
+
+        .rating-stars .star.full::before {
+            content: "\f005";
+            color: #facc15;
+        }
+
+        .rating-stars .star.half::before {
+            content: "\f089";
+            color: #facc15;
+        }
+
+        .no-reviews {
+            padding: 3rem 1rem;
+            font-size: 1.25rem;
+            color: #64748b;
+        }
+
+        .btn-pink {
+            background-color: #ec4899;
+            color: white;
+            border: none;
+        }
+
+        .btn-pink:hover {
+            background-color: #db2777;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="fragments/header :: navbar"/>
+
+<div id="scroll-buttons" style="position: fixed; right: 20px; bottom: 40px; display: flex; flex-direction: column; gap: 10px; z-index: 9999;">
+    <button id="scroll-up" class="btn btn-pink" style="width: 40px; height: 40px;">↑</button>
+    <button id="scroll-down" class="btn btn-pink" style="width: 40px; height: 40px;">↓</button>
+</div>
+
+<div class="container my-5">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a th:href="@{/mypage}">My Page</a>
+            </li>
+            <li class="breadcrumb-separator">
+                <i class="bi bi-chevron-right"></i>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">My Reviews</li>
+        </ol>
+    </nav>
+
+    <h2 class="mb-4 fw-bold text-white">My Reviews</h2>
+
+    <div th:if="${reviews.isEmpty()}" class="no-reviews">
+        <p>No reviews found.</p>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(reviews)}" class="row g-4">
+        <div th:each="review : ${reviews}" class="col-12 col-md-6">
+            <div class="card review-card h-100">
+                <div class="row g-0">
+                    <div class="col-4">
+                        <img th:src="${review.posterPath}" alt="Poster" class="img-fluid rounded-start h-100 w-100 object-fit-cover" onerror="this.onerror=null;this.src='/images/no-poster.jpg';"/>
+                    </div>
+                    <div class="col-8 d-flex flex-column p-3">
+                        <div>
+                            <h5 class="card-title text-light" th:text="${review.title}">Movie Title</h5>
+                            <p class="review-date mb-2" th:text="${#temporals.format(review.createdAt, 'yyyy-MM-dd HH:mm')}">Date</p>
+                            <p class="review-content mb-3" th:text="${review.content}">Review content</p>
+                        </div>
+
+                        <div class="mt-auto d-flex align-items-center justify-content-between mb-3">
+                            <div>
+                                <span class="fw-semibold me-2 text-light" th:text="'Rating: ' + ${review.rating} + ' / 10.0'"></span>
+                                <span class="rating-stars" th:attr="data-rating-th=${review.rating}"></span>
+                            </div>
+                            <div class="review-actions d-flex gap-2">
+                                <a th:href="@{/review/edit/{id}(id=${review.id})}" class="btn btn-sm btn-outline-primary">Edit</a>
+                                <button type="button" class="btn btn-sm btn-outline-danger delete-review-btn" th:attr="data-review-id=${review.id}">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"/>
+
+<script>
+    // SweetAlert2 delete confirmation
+    document.querySelectorAll('.delete-review-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            const reviewId = this.getAttribute('data-review-id');
+
+            Swal.fire({
+                title: "Delete this review?",
+                text: "This action cannot be undone.",
+                icon: "warning",
+                background: "#1e293b",
+                color: "#f1f5f9",
+                showCancelButton: true,
+                confirmButtonColor: "#ec4899",
+                cancelButtonColor: "#6b7280",
+                confirmButtonText: "Yes, delete it",
+                cancelButtonText: "Cancel",
+                customClass: { popup: "rounded-4 shadow-lg" }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = `/review/delete/${reviewId}`;
+                }
+            });
+        });
+    });
+
+    // Stars rendering
+    document.querySelectorAll('.rating-stars').forEach(starsContainer => {
+        const rating = parseFloat(starsContainer.getAttribute('data-rating-th')) || 0;
+        const starsCount = rating / 2;
+        let html = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= Math.floor(starsCount)) {
+                html += '<span class="star full"></span>';
+            } else if (i - 0.5 === starsCount) {
+                html += '<span class="star half"></span>';
+            } else {
+                html += '<span class="star"></span>';
+            }
+        }
+        starsContainer.innerHTML = html;
+    });
+
+    // Scroll buttons
+    document.getElementById('scroll-up').addEventListener('click', () => {
+        window.scrollBy({ top: -200, behavior: 'smooth' });
+    });
+    document.getElementById('scroll-down').addEventListener('click', () => {
+        window.scrollBy({ top: 200, behavior: 'smooth' });
+    });
+</script>
+</body>
+</html>

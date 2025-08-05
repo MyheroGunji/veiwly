@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Edit Review</title>
+    <th:block th:replace="fragments/header :: head"/>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            color: #f1f5f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .edit-container {
+            max-width: 700px;
+            margin: 3rem auto;
+            background-color: #1e293b;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+
+        h2 {
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            display: block;
+            color: #e2e8f0;
+        }
+
+        .form-control {
+            background-color: #0f172a;
+            border: 1px solid #374151;
+            color: #f1f5f9;
+        }
+
+        .form-control:focus {
+            border-color: #ec4899;
+            box-shadow: 0 0 0 0.2rem rgba(236, 72, 153, 0.25);
+        }
+
+        textarea.form-control {
+            resize: none;
+        }
+
+        .btn-pink {
+            background-color: #ec4899;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 8px;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .btn-pink:hover {
+            background-color: #db2777;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: #6b7280;
+            border: none;
+            color: white;
+            font-weight: 600;
+            padding: 0.6rem 1.4rem;
+            border-radius: 8px;
+        }
+
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+<th:block th:replace="fragments/header :: navbar"/>
+
+<div class="edit-container">
+    <h2>Edit Your Review</h2>
+    <form id="editReviewForm" th:action="@{/review/update}" th:object="${review}" method="post">
+        <input type="hidden" th:field="*{id}"/>
+
+        <div class="mb-3">
+            <label>Title</label>
+            <input type="text" th:value="${review.title}" class="form-control" readonly/>
+        </div>
+
+        <div class="mb-3">
+            <label>Rating (1.0 - 10.0)</label>
+            <input type="number" th:field="*{rating}" step="0.1" min="1.0" max="10.0" class="form-control" required/>
+        </div>
+
+        <div class="mb-3">
+            <label>Review Content</label>
+            <textarea th:field="*{content}" class="form-control" rows="5"></textarea>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-pink">Update Review</button>
+            <a th:href="@{/review/reviews}" class="btn btn-secondary">Cancel</a>
+        </div>
+    </form>
+</div>
+
+<th:block th:replace="fragments/footer :: footer"/>
+
+<script>
+    document.getElementById('editReviewForm').addEventListener('submit', function (event) {
+        event.preventDefault(); // 通常送信を止める
+
+        const form = this;
+        const formData = new FormData(form);
+
+        fetch(form.action, {
+            method: form.method,
+            body: formData
+        })
+        .then(response => {
+            if (response.ok) {
+                Swal.fire({
+                    icon: "success",
+                    title: "Update Complete!",
+                    text: "Your review has been updated successfully.",
+                    background: "#1e293b",
+                    color: "#f1f5f9",
+                    confirmButtonColor: "#ec4899",
+                    timer: 1500,
+                    showConfirmButton: false
+                }).then(() => {
+                    window.location.href = "/review/reviews"; // 成功後My Reviewsへ
+                });
+            } else {
+                Swal.fire({
+                    icon: "error",
+                    title: "Update Failed",
+                    text: "Something went wrong. Please try again.",
+                    background: "#1e293b",
+                    color: "#f1f5f9",
+                    confirmButtonColor: "#ec4899"
+                });
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            Swal.fire({
+                icon: "error",
+                title: "Error",
+                text: "An unexpected error occurred.",
+                background: "#1e293b",
+                color: "#f1f5f9",
+                confirmButtonColor: "#ec4899"
+            });
+        });
+    });
+</script>
+</body>
+</html>
